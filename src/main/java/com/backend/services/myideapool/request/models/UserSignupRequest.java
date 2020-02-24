@@ -1,5 +1,6 @@
 package com.backend.services.myideapool.request.models;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -7,12 +8,13 @@ import lombok.Getter;
 @Getter
 public class UserSignupRequest {
 
-	@NotBlank
-	private String name;
+    @NotBlank
+    private String name;
 
-	@NotBlank
-	private String email;
+    @NotBlank
+    @Email
+    private String email;
 
-	@NotBlank
-	private String password;
+    @NotBlank
+    private String password;
 }

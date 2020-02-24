@@ -30,17 +30,20 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    
-	public Integer extractUserId(String token) {
-		return (Integer) extractAllClaims(token).get("user_id");
-	}
- 
+
+    public Integer extractUserId(String token) {
+        return (Integer) extractAllClaims(token).get("user_id");
+    }
+
     private Claims extractAllClaims(String token) {
         try {
-			return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-		} catch (Exception e) {
-			throw new BadJWTTokenException();
-		} 
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new BadJWTTokenException();
+        }
     }
 
     private Boolean isTokenExpired(String token) {
@@ -49,20 +52,26 @@ public class JwtUtil {
 
     public String generateToken(CustomUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("user_id", userDetails.getUser().getId());
+        claims.put("user_id", userDetails.getUser()
+                .getId());
         return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60* 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
     }
 
-	public Boolean validateToken(String token, CustomUserDetails userDetails) {
-		final String username = extractUsername(token);
-		return (userDetails.getUser().getRefresh_token() != null && username.equals(userDetails.getUsername())
-				&& !isTokenExpired(token));
-	}
+    public Boolean validateToken(String token, CustomUserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (userDetails.getUser()
+                .getRefresh_token() != null && username.equals(userDetails.getUsername())
+                && !isTokenExpired(token));
+    }
 }

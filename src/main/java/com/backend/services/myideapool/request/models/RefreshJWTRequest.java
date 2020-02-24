@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class RefreshJWTRequest {
 
-	@NotBlank
-	private String refresh_token;
+    @NotBlank
+    private String refresh_token;
 
 }

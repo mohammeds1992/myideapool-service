@@ -29,42 +29,44 @@ import com.backend.services.myideapool.uitls.JwtUtil;
 @CrossOrigin(maxAge = 3600, origins = "*")
 public class UserController {
 
-	@Autowired
-	private UserRepository userRepository;
-	
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-	public ResponseEntity<UserLoginResponse> createUser(@RequestBody @Valid UserSignupRequest request) {
+    public ResponseEntity<UserLoginResponse> createUser(@RequestBody @Valid UserSignupRequest request) {
 
-    	
-    	User userByEmail = userRepository.findUserByEmail(request.getEmail());
-    	
-    	if(userByEmail!=null) {
-			throw new DuplicateEmailFoundException(request.getEmail());
-    	}
-    	
-		User user = new User();
 
-		user.setEmail(request.getEmail());
-		user.setName(request.getName());
-		user.setCreated_at(System.currentTimeMillis());
-		user.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
-		user.setRefresh_token(UUID.randomUUID().toString());
+        User userByEmail = userRepository.findUserByEmail(request.getEmail());
 
-		userRepository.save(user);
-		
-		return new ResponseEntity<>(UserLoginResponse.builder()
-				.jwt(jwtUtil.generateToken(new CustomUserDetails(user)))
-				.refresh_token(user.getRefresh_token())
-				.build(), HttpStatus.CREATED);
-	}
+        if (userByEmail != null) {
+            throw new DuplicateEmailFoundException(request.getEmail());
+        }
 
-	@RequestMapping(value = "/me", method = RequestMethod.GET)
-	public ResponseEntity<User> getCurrentUser(
-			@RequestHeader(value = "X-Access-Token", required = false) String token) {
-		User user = userRepository.findById(jwtUtil.extractUserId(token)).get();
-		return new ResponseEntity<>(user, HttpStatus.OK);
-	}
+        User user = new User();
+
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setCreated_at(System.currentTimeMillis());
+        user.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
+        user.setRefresh_token(UUID.randomUUID()
+                .toString());
+
+        userRepository.save(user);
+
+        return new ResponseEntity<>(UserLoginResponse.builder()
+                .jwt(jwtUtil.generateToken(new CustomUserDetails(user)))
+                .refresh_token(user.getRefresh_token())
+                .build(), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    public ResponseEntity<User> getCurrentUser(
+            @RequestHeader(value = "X-Access-Token", required = false) String token) {
+        User user = userRepository.findById(jwtUtil.extractUserId(token))
+                .get();
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }

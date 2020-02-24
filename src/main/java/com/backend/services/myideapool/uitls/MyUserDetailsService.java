@@ -12,15 +12,15 @@ import com.backend.services.myideapool.repositories.UserRepository;
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Override
-	public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user = userRepository.findUserByEmail(email);
-		if(user == null) {
-			throw new UserNotFoundException(email);
-		}
-		return new CustomUserDetails(user);
-	}
+    @Override
+    public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new UserNotFoundException(email);
+        }
+        return new CustomUserDetails(user);
+    }
 }

@@ -34,65 +34,73 @@ import com.backend.services.myideapool.uitls.MyUserDetailsService;
 @CrossOrigin(maxAge = 3600, origins = "*")
 public class UserAuthenticationController {
 
-	@Autowired
-	private JwtUtil jwtUtil;
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-		
-	@Autowired
-	private MyUserDetailsService userDetailsService;
-	
-	@Autowired
-	private UserRepository userRepository;
-    
-	@RequestMapping(value = "/access-tokens/refresh", method = RequestMethod.POST)
-	public ResponseEntity<RefreshJWTResponse> refreshJWT(@RequestBody @Valid RefreshJWTRequest request) {
+    @Autowired
+    private JwtUtil jwtUtil;
 
-		User user = userRepository.findUserByRefreshToken(request.getRefresh_token());
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-		if (user == null) {
-			throw new InvalidRefreshTokenException();
-		}
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
-		return new ResponseEntity<>(
-				RefreshJWTResponse.builder().jwt(jwtUtil.generateToken(new CustomUserDetails(user))).build(),
-				HttpStatus.OK);
-	}
+    @Autowired
+    private UserRepository userRepository;
 
-	@RequestMapping(value = "/access-tokens", method = RequestMethod.POST)
-	public ResponseEntity<UserLoginResponse> userLogin(@RequestBody @Valid UserLoginRequest request) {
+    @RequestMapping(value = "/access-tokens/refresh", method = RequestMethod.POST)
+    public ResponseEntity<RefreshJWTResponse> refreshJWT(@RequestBody @Valid RefreshJWTRequest request) {
 
-		authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        User user = userRepository.findUserByRefreshToken(request.getRefresh_token());
 
-		final CustomUserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-		final String jwt = jwtUtil.generateToken(userDetails);
+        if (user == null) {
+            throw new InvalidRefreshTokenException();
+        }
 
-		if (userDetails.getUser().getRefresh_token() == null) {
-			userDetails.getUser().setRefresh_token(UUID.randomUUID().toString());
-			userRepository.save(userDetails.getUser());
-		}
+        return new ResponseEntity<>(
+                RefreshJWTResponse.builder()
+                        .jwt(jwtUtil.generateToken(new CustomUserDetails(user)))
+                        .build(),
+                HttpStatus.OK);
+    }
 
-		return new ResponseEntity<>(UserLoginResponse.builder()
-				.jwt(jwt)
-				.refresh_token(userDetails.getUser().getRefresh_token())
-				.build(), HttpStatus.CREATED);
-	}
+    @RequestMapping(value = "/access-tokens", method = RequestMethod.POST)
+    public ResponseEntity<UserLoginResponse> userLogin(@RequestBody @Valid UserLoginRequest request) {
 
-	@RequestMapping(value = "/access-tokens", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> userLogout(@RequestHeader(value = "X-Access-Token", required = false) String token,
-			@RequestBody @Valid UserLogoutRequest request) {
-		
-		User user = userRepository.findById(jwtUtil.extractUserId(token)).get();
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-		if (!user.getRefresh_token().equals(request.getRefresh_token())) {
-			throw new InvalidRefreshTokenException();
-		}
+        final CustomUserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+        final String jwt = jwtUtil.generateToken(userDetails);
 
-		user.setRefresh_token(null);
-		userRepository.save(user);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+        if (userDetails.getUser()
+                .getRefresh_token() == null) {
+            userDetails.getUser()
+                    .setRefresh_token(UUID.randomUUID()
+                            .toString());
+            userRepository.save(userDetails.getUser());
+        }
+
+        return new ResponseEntity<>(UserLoginResponse.builder()
+                .jwt(jwt)
+                .refresh_token(userDetails.getUser()
+                        .getRefresh_token())
+                .build(), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/access-tokens", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> userLogout(@RequestHeader(value = "X-Access-Token", required = false) String token,
+                                           @RequestBody @Valid UserLogoutRequest request) {
+
+        User user = userRepository.findById(jwtUtil.extractUserId(token))
+                .get();
+
+        if (!user.getRefresh_token()
+                .equals(request.getRefresh_token())) {
+            throw new InvalidRefreshTokenException();
+        }
+
+        user.setRefresh_token(null);
+        userRepository.save(user);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

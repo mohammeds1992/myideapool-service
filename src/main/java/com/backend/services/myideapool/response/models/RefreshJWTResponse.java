@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RefreshJWTResponse {
 
-	private String jwt;
+    private String jwt;
 
 }

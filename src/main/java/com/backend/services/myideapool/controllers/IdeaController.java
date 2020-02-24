@@ -1,7 +1,5 @@
 package com.backend.services.myideapool.controllers;
 
-import java.util.Date;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,70 +26,67 @@ import com.backend.services.myideapool.uitls.JwtUtil;
 @CrossOrigin(maxAge = 3600, origins = "*")
 public class IdeaController {
 
-	@Autowired
-	private IdeaRepository ideaRepository;
+    @Autowired
+    private IdeaRepository ideaRepository;
 
-	@Autowired
-	private JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Idea> createIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
-			@RequestBody @Valid CreateOrUpdateIdeaRequest request) {
+    public ResponseEntity<Idea> createIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
+                                           @RequestBody @Valid CreateOrUpdateIdeaRequest request) {
 
-		Date current_date = new Date();
 
-		Idea idea = ideaRepository.save(Idea.builder()
-					.created_at(current_date)
-					.last_modified_at(current_date)
-					.content(request.getContent())
-					.impact(request.getImpact())
-					.ease(request.getEase())
-					.confidence(request.getConfidence())
-					.user_id(jwtUtil.extractUserId(token))
-					.build());
-		
-		return new ResponseEntity<>(idea, HttpStatus.CREATED);
-	}
+        Idea idea = ideaRepository.save(Idea.builder()
+                .created_at(System.currentTimeMillis())
+                .content(request.getContent())
+                .impact(request.getImpact())
+                .ease(request.getEase())
+                .confidence(request.getConfidence())
+                .user_id(jwtUtil.extractUserId(token))
+                .build());
+        idea.setAverage((idea.getImpact() + idea.getEase() + idea.getConfidence())/3.0);
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Idea> updateIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
-			@PathVariable("id") Integer id, @RequestBody @Valid CreateOrUpdateIdeaRequest request) {
+        return new ResponseEntity<>(idea, HttpStatus.CREATED);
+    }
 
-		Idea idea = ideaRepository.findById(id).orElseThrow(() -> new IdeaNotFoundException(id));
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Idea> updateIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
+                                           @PathVariable("id") Integer id, @RequestBody @Valid CreateOrUpdateIdeaRequest request) {
 
-		idea.setContent(request.getContent());
-		idea.setConfidence(request.getConfidence());
-		idea.setEase(request.getEase());
-		idea.setImpact(request.getImpact());
+        Idea idea = ideaRepository.findById(id)
+                .orElseThrow(() -> new IdeaNotFoundException(id));
 
-		ideaRepository.save(idea);
+        idea.setContent(request.getContent());
+        idea.setConfidence(request.getConfidence());
+        idea.setEase(request.getEase());
+        idea.setImpact(request.getImpact());
+        idea.setAverage((idea.getImpact() + idea.getEase() + idea.getConfidence())/3.0);
 
-		return new ResponseEntity<>(idea, HttpStatus.OK);
-	}
+        ideaRepository.save(idea);
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Idea> getIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
-			@PathVariable("id") Integer id) {
-		Idea idea = ideaRepository.findById(id).orElseThrow(() -> new IdeaNotFoundException(id));
-		return new ResponseEntity<>(idea, HttpStatus.OK);
+        return new ResponseEntity<>(idea, HttpStatus.OK);
+    }
 
-	}
-	
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
-			@PathVariable("id") Integer id) {
-		Idea idea =  ideaRepository.findById(id).orElseThrow(() -> new IdeaNotFoundException(id));
-		ideaRepository.delete(idea);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
-	
+
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteIdea(@RequestHeader(value = "X-Access-Token", required = false) String token,
+                                           @PathVariable("id") Integer id) {
+        Idea idea = ideaRepository.findById(id)
+                .orElseThrow(() -> new IdeaNotFoundException(id));
+        ideaRepository.delete(idea);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Iterable<Idea>> getIdeas(
 			@RequestHeader(value = "X-Access-Token", required = false) String token,
 			@RequestParam(value = "page_size", required = false, defaultValue = "10") Integer page_size,
-			@RequestParam(value = "page_number", required = false, defaultValue = "1") Integer page_number) {
+			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page_number) {
 		int offset = (page_number - 1) * page_size;
-		return new ResponseEntity<>(ideaRepository.findIdeas(jwtUtil.extractUserId(token), page_size, offset),
-				HttpStatus.OK);
+		Iterable<Idea> ideas = ideaRepository.findIdeas(jwtUtil.extractUserId(token), page_size, offset);
+		ideas.forEach(idea -> idea.setAverage((idea.getImpact() + idea.getEase() + idea.getConfidence()) / 3.0));
+		return new ResponseEntity<>(ideas, HttpStatus.OK);
 	}
 }

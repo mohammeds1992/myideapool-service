@@ -9,6 +9,6 @@ import com.backend.services.myideapool.entities.Idea;
 
 public interface IdeaRepository extends CrudRepository<Idea, Integer> {
 
-	@Query(value = "select * from Idea where user_id = ?1 LIMIT ?2 OFFSET ?3", nativeQuery = true)
-	List<Idea> findIdeas(Integer userId, Integer pageSize, Integer pageNumber);
+    @Query(value = "select * from Idea where user_id = ?1 LIMIT ?2 OFFSET ?3", nativeQuery = true)
+    List<Idea> findIdeas(Integer userId, Integer pageSize, Integer pageNumber);
 }

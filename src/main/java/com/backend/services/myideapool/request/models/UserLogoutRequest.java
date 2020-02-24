@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 public class UserLogoutRequest {
 
-	@NotBlank
-	private String refresh_token;
+    @NotBlank
+    private String refresh_token;
 }

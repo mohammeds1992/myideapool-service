@@ -38,7 +38,7 @@ public class CustomErrorResponse {
     public void setError(String error) {
         this.error = error;
     }
-    
+
     public String convertToJson() throws JsonProcessingException {
 
         ObjectMapper mapper = new ObjectMapper();

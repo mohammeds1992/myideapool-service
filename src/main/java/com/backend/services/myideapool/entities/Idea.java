@@ -1,13 +1,13 @@
 package com.backend.services.myideapool.entities;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import org.springframework.data.annotation.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,28 +22,28 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Idea {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
-	private Integer user_id;
+    @JsonIgnore
+    private Integer user_id;
 
-	@Setter
-	private String content;
+    @Setter
+    private String content;
 
-	@Setter
-	private Integer impact;
+    @Setter
+    private Integer impact;
 
-	@Setter
-	private Integer ease;
+    @Setter
+    private Integer ease;
 
-	@Setter
-	private Integer confidence;
+    @Setter
+    private Integer confidence;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created_at;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Setter
-	private Date last_modified_at;
+    private Long created_at;
+    
+    @Transient
+    @Setter
+    private Double average;
 }
