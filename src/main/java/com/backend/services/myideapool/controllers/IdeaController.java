@@ -19,7 +19,7 @@ import com.backend.services.myideapool.entities.Idea;
 import com.backend.services.myideapool.exceptions.IdeaNotFoundException;
 import com.backend.services.myideapool.repositories.IdeaRepository;
 import com.backend.services.myideapool.request.models.CreateOrUpdateIdeaRequest;
-import com.backend.services.myideapool.uitls.JwtUtil;
+import com.backend.services.myideapool.utils.JwtUtil;
 
 @RestController
 @RequestMapping(value = "/ideas", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,7 +28,7 @@ public class IdeaController {
 
     @Autowired
     private IdeaRepository ideaRepository;
-
+    
     @Autowired
     private JwtUtil jwtUtil;
 

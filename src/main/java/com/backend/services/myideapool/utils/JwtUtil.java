@@ -1,4 +1,4 @@
-package com.backend.services.myideapool.uitls;
+package com.backend.services.myideapool.utils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 public class JwtUtil {
 
-    private String SECRET_KEY = "secret";
+    private String SECRET_KEY = "kzYatrjKxQwy";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

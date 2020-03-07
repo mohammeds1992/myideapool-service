@@ -25,9 +25,9 @@ import com.backend.services.myideapool.request.models.UserLoginRequest;
 import com.backend.services.myideapool.request.models.UserLogoutRequest;
 import com.backend.services.myideapool.response.models.RefreshJWTResponse;
 import com.backend.services.myideapool.response.models.UserLoginResponse;
-import com.backend.services.myideapool.uitls.CustomUserDetails;
-import com.backend.services.myideapool.uitls.JwtUtil;
-import com.backend.services.myideapool.uitls.MyUserDetailsService;
+import com.backend.services.myideapool.utils.CustomUserDetails;
+import com.backend.services.myideapool.utils.JwtUtil;
+import com.backend.services.myideapool.utils.MyUserDetailsService;
 
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)

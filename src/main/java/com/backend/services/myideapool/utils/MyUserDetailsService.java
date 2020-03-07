@@ -1,4 +1,4 @@
-package com.backend.services.myideapool.uitls;
+package com.backend.services.myideapool.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;

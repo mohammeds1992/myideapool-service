@@ -21,8 +21,8 @@ import com.backend.services.myideapool.exceptions.DuplicateEmailFoundException;
 import com.backend.services.myideapool.repositories.UserRepository;
 import com.backend.services.myideapool.request.models.UserSignupRequest;
 import com.backend.services.myideapool.response.models.UserLoginResponse;
-import com.backend.services.myideapool.uitls.CustomUserDetails;
-import com.backend.services.myideapool.uitls.JwtUtil;
+import com.backend.services.myideapool.utils.CustomUserDetails;
+import com.backend.services.myideapool.utils.JwtUtil;
 
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)

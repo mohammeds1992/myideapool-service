@@ -1,4 +1,4 @@
-package com.backend.services.myideapool.uitls;
+package com.backend.services.myideapool.utils;
 
 import java.util.Collection;
 import java.util.HashSet;

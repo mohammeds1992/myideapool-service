@@ -1,17 +1,10 @@
-package com.backend.services.myideapool.uitls;
+package com.backend.services.myideapool.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MD5Util {
-
-    public static void main(String[] args) {
-
-        String email = "someone@somewhere.com";
-        String hash = MD5Util.md5Hex(email);
-        System.out.println(hash);
-    }
 
     public static String hex(byte[] array) {
         StringBuffer sb = new StringBuffer();
@@ -32,5 +25,9 @@ public class MD5Util {
         } catch (UnsupportedEncodingException e) {
         }
         return null;
+    }
+    
+    public static String getAvatarURL(String email) {
+    	return "https://www.gravatar.com/avatar/" + MD5Util.md5Hex(email);
     }
 }
