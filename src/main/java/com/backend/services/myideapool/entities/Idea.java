@@ -45,5 +45,5 @@ public class Idea {
     
     @Transient
     @Setter
-    private Double average;
+    private Double average_score;
 }

@@ -45,7 +45,7 @@ public class IdeaController {
                 .confidence(request.getConfidence())
                 .user_id(jwtUtil.extractUserId(token))
                 .build());
-        idea.setAverage((idea.getImpact() + idea.getEase() + idea.getConfidence())/3.0);
+        idea.setAverage_score((idea.getImpact() + idea.getEase() + idea.getConfidence())/3.0);
 
         return new ResponseEntity<>(idea, HttpStatus.CREATED);
     }
@@ -61,7 +61,7 @@ public class IdeaController {
         idea.setConfidence(request.getConfidence());
         idea.setEase(request.getEase());
         idea.setImpact(request.getImpact());
-        idea.setAverage((idea.getImpact() + idea.getEase() + idea.getConfidence())/3.0);
+        idea.setAverage_score((idea.getImpact() + idea.getEase() + idea.getConfidence())/3.0);
 
         ideaRepository.save(idea);
 
@@ -86,7 +86,7 @@ public class IdeaController {
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page_number) {
 		int offset = (page_number - 1) * page_size;
 		Iterable<Idea> ideas = ideaRepository.findIdeas(jwtUtil.extractUserId(token), page_size, offset);
-		ideas.forEach(idea -> idea.setAverage((idea.getImpact() + idea.getEase() + idea.getConfidence()) / 3.0));
+		ideas.forEach(idea -> idea.setAverage_score((idea.getImpact() + idea.getEase() + idea.getConfidence()) / 3.0));
 		return new ResponseEntity<>(ideas, HttpStatus.OK);
 	}
 }
