@@ -69,15 +69,13 @@ public class UserAuthenticationController {
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         final CustomUserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
 
-        if (userDetails.getUser()
-                .getRefresh_token() == null) {
-            userDetails.getUser()
-                    .setRefresh_token(UUID.randomUUID()
-                            .toString());
-            userRepository.save(userDetails.getUser());
-        }
+		if (userDetails.getUser().getRefresh_token() == null) {
+			userDetails.getUser().setRefresh_token(UUID.randomUUID().toString());
+			userRepository.save(userDetails.getUser());
+		}
+
+		final String jwt = jwtUtil.generateToken(userDetails);
 
         return new ResponseEntity<>(UserLoginResponse.builder()
                 .jwt(jwt)

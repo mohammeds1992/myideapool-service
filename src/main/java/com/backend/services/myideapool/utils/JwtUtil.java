@@ -21,6 +21,10 @@ public class JwtUtil {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+    
+    public String extractRefreshToken(String token) {
+        return (String) extractAllClaims(token).get("refresh_token");
+    }
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -52,8 +56,9 @@ public class JwtUtil {
 
     public String generateToken(CustomUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("user_id", userDetails.getUser()
-                .getId());
+		claims.put("user_id", userDetails.getUser().getId());
+		claims.put("refresh_token", userDetails.getUser().getRefresh_token());
+
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -68,10 +73,12 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, CustomUserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (userDetails.getUser()
-                .getRefresh_token() != null && username.equals(userDetails.getUsername())
-                && !isTokenExpired(token));
-    }
+	public Boolean validateToken(String token, CustomUserDetails userDetails) {
+		final String username = extractUsername(token);
+		final String refreshToken = extractRefreshToken(token);
+
+		return (refreshToken != null && userDetails.getUser().getRefresh_token() != null
+				&& refreshToken.equals(userDetails.getUser().getRefresh_token())
+				&& username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	}
 }
